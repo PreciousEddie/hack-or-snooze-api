@@ -21,20 +21,15 @@ async function getAndShowStoriesOnStart() {
 
 function generateStoryMarkup(story, showDeleteBtn = false) {
   console.debug("generateStoryMarkup", story);
-
-  const hostName = story.getHostName();
-
-  const showStar = Boolean(currentUser);
-
   return $(`
       <li id="${story.storyId}">
       <div>
       ${showDeleteBtn ? getDeleteBtnHTML() : ""}
-      ${showStar ? getStarHTML(story, currentUser) : ""}
+      ${Boolean(currentUser) ? getStarHTML(story, currentUser) : ""}
         <a href="${story.url}" target="a_blank" class="story-link">
           ${story.title}
         </a>
-        <small class="story-hostname">(${hostName})</small>
+        <small class="story-hostname">(${story.getHostName()})</small>
         <div class="story-author">by ${story.author}</div>
         <div class="story-user">posted by ${story.username}</div>
         </div>
@@ -87,7 +82,7 @@ async function submitNewStory(evt) {
   $allStoriesList.prepend($story);
 
   // Hide the submit form and reset its values
-  $submitForm.slideup("slow");
+  $submitForm.slideUp("slow");
   $submitForm.trigger("reset");
 }
 
@@ -114,11 +109,9 @@ function getDeleteBtnHTML() {
  * @returns {string} The HTML markup for the star icon.
  */
 function getStarHTML(story, user) {
-  const isFavorite = user.isFavorite(story);
-  const starType = isFavorite ? "fas" : "far";
   return `
   <span class="star">
-  <i class="${starType} fa-star"></i>
+  <i class="${user.isFavorite(story) ? "fas" : "far"} fa-star"></i>
   </span>`;
 }
 
@@ -130,15 +123,11 @@ function getStarHTML(story, user) {
  */
 async function deleteStory(evt) {
   console.debug("deleteStory");
-
-  // Find the closest <li> element containing the story
-  const $closestLi = $(evt.target).closest("li");
-
-  // Retrieve the story ID from the 'id' attribute of the <li> element
-  const storyId = $closestLi.attr("id");
-
   // Call the removeStory method of the storyList object to delete the story
-  await storyList.removeStory(currentUser, storyId);
+  await storyList.removeStory(
+    currentUser,
+    $(evt.target).closest("li").attr("id")
+  );
 
   // Refresh the user's stories on the page by calling putUserStoriesOnPage
   await putUserStoriesOnPage();

@@ -91,7 +91,7 @@ class StoryList {
     // Add the new story to the beginning of the ownStories array in the user object
     user.ownStories.unshift(story);
 
-    // Return the newly added Story object wrapped in a Promise
+    // Return the newly added Story object
     return story;
   }
 

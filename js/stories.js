@@ -141,6 +141,7 @@ $ownStories.on("click", ".trash-can", deleteStory);
  */
 function putUserStoriesOnPage() {
   console.debug("putUserStoriesOnPage");
+  hidePageComponents();
   $ownStories.empty();
 
   // Check if the current user has added any stories
@@ -165,6 +166,7 @@ function putUserStoriesOnPage() {
  */
 function putFavoritesListOnPage() {
   console.debug("putFavoritesListOnPage");
+  hidePageComponents();
 
   $favoritedStories.empty();
 

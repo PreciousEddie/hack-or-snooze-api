@@ -59,33 +59,39 @@ function putStoriesOnPage() {
 }
 
 /**
- * Handles the submission of a new story form.
- * It logs a debug message, prevents the default form submission behavior,
- * retrieves the form data, adds the story to the story list, generates the story markup,
- * prepends the story to the all stories list, hides the submit form, and resets the form fields.
- * @async
+ * Submits a new story form and adds the story to the story list.
+ *
  * @param {Event} evt - The submit event object.
- * @returns {Promise<void>}
+ * @returns {Promise} A promise that resolves once the new story is added.
  */
 async function submitNewStory(evt) {
   console.debug("submitNewStory");
   evt.preventDefault();
 
+  // Retrieve the form input values
   const author = $("#create-author").val();
   const title = $("#create-title").val();
   const url = $("#create-url").val();
   const username = currentUser.username;
+
+  // Create an object with the story data
   const storyData = { author, title, url, username };
 
+  // Add the story to the story list using the addStory method
   const story = await storyList.addStory(currentUser, storyData);
 
+  // Generate the HTML markup for the new story
   const $story = generateStoryMarkup(story);
+
+  // Prepend the new story to the list of all stories
   $allStoriesList.prepend($story);
 
+  // Hide the submit form and reset its values
   $submitForm.slideup("slow");
   $submitForm.trigger("reset");
 }
 
+// Attach the submit event handler to the submit form
 $submitForm.on("submit", submitNewStory);
 
 /**
@@ -118,36 +124,45 @@ function getStarHTML(story, user) {
 
 /**
  * Deletes a story when the delete button is clicked.
- * @async
+ *
  * @param {Event} evt - The click event object.
- * @returns {Promise<void>} - A promise that resolves once the story is deleted.
+ * @returns {Promise} - A promise that resolves once the story is deleted.
  */
 async function deleteStory(evt) {
   console.debug("deleteStory");
 
+  // Find the closest <li> element containing the story
   const $closestLi = $(evt.target).closest("li");
+
+  // Retrieve the story ID from the 'id' attribute of the <li> element
   const storyId = $closestLi.attr("id");
 
+  // Call the removeStory method of the storyList object to delete the story
   await storyList.removeStory(currentUser, storyId);
 
+  // Refresh the user's stories on the page by calling putUserStoriesOnPage
   await putUserStoriesOnPage();
 }
 
+// Attach the click event handler to the trash-can icon within $ownStories
 $ownStories.on("click", ".trash-can", deleteStory);
 
 /**
  * Renders the user's stories on the page.
- * @description This function empties the $ownStories container, and then appends the user's stories to it. If there are no stories, a message indicating that no stories have been added by the user is displayed. The stories are generated using the generateStoryMarkup function.
- * @returns {void}
  */
 function putUserStoriesOnPage() {
   console.debug("putUserStoriesOnPage");
   $ownStories.empty();
 
+  // Check if the current user has added any stories
   if (currentUser.ownStories.length === 0) {
+    // If there are no stories, display a message indicating no stories added
     $ownStories.append("<h5>No stories added by user yet!</h5>");
   } else {
+    // If there are stories, iterate through each story
     for (let story of currentUser.ownStories) {
+      // Generate the markup for the story using the generateStoryMarkup function
+      // The second parameter (true) indicates that it's a user's own story
       let $story = generateStoryMarkup(story, true);
       $ownStories.append($story);
     }
@@ -180,7 +195,6 @@ function putFavoritesListOnPage() {
  * If the story is already favorited, removes it from the user's favorites.
  * If the story is not favorited, adds it to the user's favorites.
  * @param {Event} evt - The click event object.
- * @returns {Promise<void>} - A promise that resolves when the favorite status is toggled.
  */
 async function toggleStoryFavorite(evt) {
   console.debug("toggleStoryFavorite");
@@ -188,15 +202,24 @@ async function toggleStoryFavorite(evt) {
   const $tgt = $(evt.target);
   const $closestLi = $tgt.closest("li");
   const storyId = $closestLi.attr("id");
+
+  // Find the corresponding story object in the storyList.stories array
   const story = storyList.stories.find((s) => s.storyId === storyId);
 
+  // Check if the target element has the "fas" class indicating it's currently favorited
   if ($tgt.hasClass("fas")) {
+    // If it's favorited, remove it from the user's favorites
     await currentUser.removeFavorite(story);
+    // Toggle the classes "fas" and "far" on the closest <i> element to switch the star icon
     $tgt.closest("i").toggleClass("fas far");
   } else {
+    // If it's not favorited, add it to the user's favorites
     await currentUser.addFavorite(story);
+    // Toggle the classes "fas" and "far" on the closest <i> element to switch the star icon
     $tgt.closest("i").toggleClass("fas far");
   }
 }
 
+// Attach the toggleStoryFavorite function as a click event handler to the $allStoriesList element,
+// targeting the elements with the "star" class within it
 $allStoriesList.on("click", ".star", toggleStoryFavorite);

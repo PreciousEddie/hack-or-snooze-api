@@ -65,43 +65,58 @@ class StoryList {
 
   /**
    * Adds a new story to the system and updates the user's story and favorites lists.
-   * @async
+   *
    * @param {User} user - The user object who is adding the story.
    * @param {object} storyData - The object containing the details of the new story. (Author, title, and URL)
-   * @returns {Promise<Story>} - A Promise that resloves to the newly added Story object.
+   * @returns {Promise} - A Promise that resloves to the newly added Story object.
    */
 
   async addStory(user, { author, title, url }) {
+    //Extract the login token from the user object
     const token = user.loginToken;
+
+    // Make an HTTP POST request to the server to add the story
     const response = await axios({
       method: "POST",
       url: `${BASE_URL}/stories`,
       data: { token, story: { author, title, url } },
     });
 
+    // Create a new Story object from the response data
     const story = new Story(response.data.story);
+
+    // Add the new story to the beginning of the stories array in storyList
     this.stories.unshift(story);
+
+    // Add the new story to the beginning of the ownStories array in the user object
     user.ownStories.unshift(story);
 
+    // Return the newly added Story object wrapped in a Promise
     return story;
   }
 
   /**
    * Removes a story from the system and updates the user's story and favorites lists.
-   * @async
+   *
    * @param {User} user - The user object who is removing the story.
    * @param {string} storyId - The ID of the story to be removed.
-   * @returns {Promise} - A promise that resolves when the story has been successfully removed and user lists have been updated.
+   * @returns {Promise} - A promise that resolves when the removal is complete.
    */
   async removeStory(user, storyId) {
+    // Make an HTTP DELETE request to the server to remove the story
     await axios({
       url: `${BASE_URL}/stories/${storyId}`,
       method: "DELETE",
       data: { token: user.loginToken },
     });
 
+    // Remove the story from the stories array in storyList
     this.stories = this.stories.filter((story) => story.storyId !== storyId);
+
+    // Remove the story from the ownStories array in the user object
     user.ownStories = user.ownStories.filter((s) => s.storyId !== storyId);
+
+    // Remove the story from the favorites array in the user object (if present)
     user.favorites = user.favorites.filter((s) => s.storyId != storyId);
   }
 }
@@ -219,23 +234,29 @@ class User {
 
   /**
    * Adds a sotry to the user's favorites and updates the favorites on the server.
-   * @async
+   *
    * @param {Story} story - The story object to be added to favorites.
-   * @returns {Promise} - A promise that resloves when the favorites have been successfully updated.
+   * @returns {Promise} - A promise that resloves when the addition is complete.
    */
   async addFavorite(story) {
+    // Add the story to the favorites array in the user object
     this.favorites.push(story);
+
+    // Call the updateFavorite method to update the server-side favorites list
     await this.updateFavorite("add", story);
   }
 
   /**
    * Removes a story from the user's favorites and updates the favorites on the server.
-   * @async
+   *
    * @param {Story} story - The story object to be removed from the favorites.
-   * @returns {Promise} - A promise that resolves when the favorites have been successfully updated.
+   * @returns {Promise} - A promise that resolves when the removal is complete.
    */
   async removeFavorite(story) {
+    // Filter out the story from the favorites array in the user object
     this.favorites = this.favorites.filter((s) => s.storyId !== story.storyId);
+
+    // Call the updateFavorite method to update the server-side favorites list
     await this.updateFavorite("remove", story);
   }
 
@@ -244,11 +265,16 @@ class User {
    * @async
    * @param {string} newState - The new state of the favorite status. Should either "add" or "remove".
    * @param {Story} story - The story object for which the favorite status is being updated.
-   * @returns {Promise} - A promise that resolves when the favorite status has been successfully updated on the server.
+   * @returns {Promise} - A promise that resolves when the update is complete.
    */
   async updateFavorite(newState, story) {
+    // Determine the HTTP method based on the newState parameter
     const method = newState === "add" ? "POST" : "DELETE";
+
+    // Retrieve the user's login token from the user object
     const token = this.loginToken;
+
+    // Send an HTTP request to update the favorites list on the server
     await axios({
       url: `${BASE_URL}/users/${this.username}/favorites/${story.storyId}`,
       method: method,
@@ -262,6 +288,7 @@ class User {
    * @returns {boolean} - True if story is in the user's favorites, false otherwise.
    */
   isFavorite(story) {
+    // Use the Array some() method to check if any favorite story has the same storyId as the given story
     return this.favorites.some((s) => s.storyId === story.storyId);
   }
 }

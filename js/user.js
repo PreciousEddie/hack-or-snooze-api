@@ -108,22 +108,21 @@ function saveUserCredentialsInLocalStorage() {
  */
 
 function updateUIOnUserLogin() {
-  console.debug("updateUIOnUserLogin"); //a debug message is printed to the console indicating that the updateUIOnUserLogin function has been called
+  console.debug("updateUIOnUserLogin");
 
-  hidePageComponents(); //the hidePageComponents function is called which is responsible for hiding various page components, such as the login/signup forms and other sections
+  hidePageComponents();
 
-  putStoriesOnPage(); //the putStoriesOnPage function is called which is responsible for populating the list of all the stories on the page
-  $allStoriesList.show(); //the $allStoriesList is shown using the show method to ensure that the list of all stories is visible on the page
+  putStoriesOnPage();
+  $allStoriesList.show();
 
-  updateNavOnLogin(); //the updateNavLogin function is called which is responsible for updating the navigation bar based on the user's login status. it may show or hide certain navigation links or display the user's username
-  generateUserProfile(); //the generateUserProfile function is called which is responsible for generating the user's profile section on the page which may include info such as the user's username
-  $storiesContainer.show(); //the $storiesContainer element is shown using the show method to ensure that the container for displaying stories is visible on the page
+  updateNavOnLogin();
+  generateUserProfile();
+  $storiesContainer.show();
 }
 
 function generateUserProfile() {
-  console.debug("generateUserProfile"); //a debug message is printed to the console indicating that the generateUserProfile function has been called
-
-  $("#profile-name").text(currentUser.name); //the text method is called on the #profile-name DOM element, and the currentUser.name value is passed as the argument. this sets the text content to the value of the currentUser.name property
-  $("#profile-username").text(currentUser.username); //the text method is called on the #profile-username DOM element, and the currentUser.username value is passed as the argument. this sets the text content to the value of the currentUser.username property
-  $("#profile-account-date").text(currentUser.createdAt.slice(0, 10)); //the text method is called on the #profile-account-date DOM element, and the currentUser.createdAt.slice(0, 10) value is passed as the argument. this sets the text content to the first 10 characters of the  currentUser.createdAt property, representing the account creation date
+  console.debug("generateUserProfile");
+  $("#profile-name").text(currentUser.name);
+  $("#profile-username").text(currentUser.username);
+  $("#profile-account-date").text(currentUser.createdAt.slice(0, 10));
 }

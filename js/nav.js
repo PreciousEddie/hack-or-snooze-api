@@ -14,14 +14,21 @@ function navAllStories(evt) {
 
 $body.on("click", "#nav-all", navAllStories);
 
+/**
+ * Handles the click event on the submit story navigation button.
+ * It hides other page components, shows the all stories list, and displays the submit form.
+ *
+ * @param {Event} evt - The click event object.
+ * @returns {void}
+ */
 function navStorySubmitClick(evt) {
-  console.debug("navStorySubmitClick", evt); //a debug message is printed to the console to indicate that the navStorySubmitClick event was triggered and the evt parameter contains info about the event
-  hidePageComponents(); //calls the function to hide or remove any visible page components to prepare for showing the submit form
-  $allStoriesList.show(); //takes the OL DOM element and uses the show method to make it visible
-  $submitForm.show(); //takes the FORM DOM element and uses the show method to make it visible
+  console.debug("navStorySubmitClick", evt);
+  hidePageComponents();
+  $allStoriesList.show();
+  $submitForm.show();
 }
 
-$navSubmitStory.on("click", navStorySubmitClick); //listens for the click event on the navSubmitStory DOM element and calls the navStorySubmitClick function
+$navSubmitStory.on("click", navStorySubmitClick);
 
 /** Show login/signup on click on "login" */
 
@@ -45,27 +52,49 @@ function updateNavOnLogin() {
   $navUserProfile.text(`${currentUser.username}`).show();
 }
 
+/**
+ * Handles the click event on the favorites navigation button.
+ * It logs a debug message, hides other page components, and puts the favorites list on the page.
+ *
+ * @param {Event} evt - The click event object.
+ * @returns {void}
+ */
 function navFavoritesClick(evt) {
-  console.debug("navFavoritesClick", evt); //a debug message is printed to the console indicating the navFavoritesClick event was triggered and the evt parameter contains info about the event
-  hidePageComponents(); //calls the hidePageComponents function to hide any visible page components to prepare for displaying the favorites list
-  putFavoritesListOnPage(); //calls the putFavoritesListOnPage function to retrieve the users favorite stories and generates the HTML markup to display them on the page
+  console.debug("navFavoritesClick", evt);
+  hidePageComponents();
+  putFavoritesListOnPage();
 }
 
-$body.on("click", "#nav-favorites", navFavoritesClick); //adds an event listener to the body element using the on method and listens for a click event on the element with the nav-favorites ID. when the event is triggered it calls the navFavoritesClick function
+$body.on("click", "#nav-favorites", navFavoritesClick);
 
+/**
+ * Handles the click event on the "My Stories" navigation button.
+ * It logs a debug message, hides other page components, puts the user's stories on the page,
+ * and shows the section displaying the user's own stories.
+ *
+ * @param {Event} evt - The click event object.
+ * @returns {void}
+ */
 function navMyStories(evt) {
-  console.debug("navMyStories", evt); //a debug message is printed to the console indicating the navMyStories event was triggered and the evt parameter contains info about the event
-  hidePageComponents(); //calls the hidePageComponents function to hide any visible page components to prepare for displaying the users stories
-  putUserStoriesOnPage(); //calls the putUserStoriesOnPage function to retrieve the users stories and generates the HTML markup to display them on the page
-  $ownStories.show(); //the $ownStories DOM element is shown using the show method
+  console.debug("navMyStories", evt);
+  hidePageComponents();
+  putUserStoriesOnPage();
+  $ownStories.show();
 }
 
-$body.on("click", "#nav-my-stories", navMyStories); //adds an event listener to the body element using the on method and listens for a click event on the element with the nav-my-stories ID. when the event is triggered it calls the navMyStories function
+$body.on("click", "#nav-my-stories", navMyStories);
 
+/**
+ * Handles the click event on the profile navigation button.
+ * It logs a debug message, hides other page components, and shows the user profile section.
+ *
+ * @param {Event} evt - The click event object.
+ * @returns {void}
+ */
 function navProfileClick(evt) {
-  console.debug("navProfileClick", evt); //a debug message is printed to the console indicating the navProfileClick event was triggered and the evt parameter contains the info about the event
-  hidePageComponents(); //calls the hidePageComponents function to hide any visible page components to prepare for displaying the users profile
-  $userProfile.show(); //the $userProfile DOM element is shown using the show method
+  console.debug("navProfileClick", evt);
+  hidePageComponents();
+  $userProfile.show();
 }
 
-$navUserProfile.on("click", navProfileClick); //adds an event listener to the navUserProfile element using the on method and listens for a click event. when the event is triggered it calls the navProfileClick function
+$navUserProfile.on("click", navProfileClick);
